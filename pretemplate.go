@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+
 	fileFolder := filepath.Clean(os.Args[1])
 	templateFolder := filepath.Clean(os.Args[2])
 	outputFolder := filepath.Clean(os.Args[3])
@@ -48,7 +49,9 @@ func createOutput(fileFolder, templateFolder, outputFolder string, templates *te
 		isErr(err)
 
 		err = executableTemplate.ExecuteTemplate(f, fileName, nil)
-		isErr(err)
+		if err != nil{
+			fmt.Println(err)
+		}
 		//Save it to the  system
 		f.Close()
 	}
@@ -74,12 +77,13 @@ func loadTemplates(templateFolder string) *template.Template {
 	fileList := getListOfFiles(templateFolder)
 
 	//Import these templates
-	template, err := template.ParseFiles(fileList...)
+	ttPlate := template.New("t").Delims("{{{", "}}}")
+	ttPlate, err := ttPlate.ParseFiles(fileList...)
 	if err != nil {
 		fmt.Println("Problem importing templates")
 		panic("")
 	}
-	return template
+	return ttPlate
 }
 
 //Returns the list of files inside a directory
