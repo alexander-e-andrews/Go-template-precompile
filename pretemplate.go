@@ -9,11 +9,19 @@ import (
 )
 
 func main() {
+	leftDelim := "{{{"
+	rightDelim := "}}}"
 
 	fileFolder := filepath.Clean(os.Args[1])
 	templateFolder := filepath.Clean(os.Args[2])
 	outputFolder := filepath.Clean(os.Args[3])
-	templates := loadTemplates(templateFolder)
+
+	if len(os.Args) == 6{
+		leftDelim = os.Args[4]
+		rightDelim = os.Args[5]
+	} 
+
+	templates := loadTemplates(templateFolder, leftDelim, rightDelim)
 	createOutput(fileFolder, templateFolder, outputFolder, templates)
 }
 
@@ -72,12 +80,12 @@ func isErr(err error) {
 	}
 }
 
-func loadTemplates(templateFolder string) *template.Template {
+func loadTemplates(templateFolder, leftDelim, rightDelim string) *template.Template {
 	//Get the list of files to add to the templates
 	fileList := getListOfFiles(templateFolder)
 
 	//Import these templates
-	ttPlate := template.New("t").Delims("{{{", "}}}")
+	ttPlate := template.New("t").Delims(leftDelim, rightDelim)
 	ttPlate, err := ttPlate.ParseFiles(fileList...)
 	if err != nil {
 		fmt.Println("Problem importing templates")

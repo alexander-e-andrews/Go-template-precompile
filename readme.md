@@ -10,4 +10,9 @@ To Build: go build pretemplate.go
 
 To Run: pretemplate.exe "pagesToFillFolder" "TemplateToFillWith" "FolderToOutputTo"
 
+Optional 4th and 5th arguments used to change left and right delimiters.
+
+Make sure that these delimiters are not subsets of the expected delimiters by your applications template,
+otherwise you will get an unexpected token error
+
 The directory structure beyond the fillPages will be respected when put into the output folder
