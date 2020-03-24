@@ -15,7 +15,12 @@ import (
 var extensionAccepts map[string]bool
 
 func main() {
-	extFilePathP := flag.String("aExt", "./fileExt.txt", "Used to allow more accepted file extensions into your templating, all others will be plain copied")
+	path, err := os.Executable()
+	isErr(err)
+	extFileFilePath := filepath.Join(filepath.Dir(path), "fileExt.txt")
+	fmt.Println(extFileFilePath)
+
+	extFilePathP := flag.String("aExt", extFileFilePath, "Used to allow more accepted file extensions into your templating, all others will be plain copied")
 
 	leftDelimP := flag.String("lDelim", "{{{", "The left delimiter to use")
 	rightDelimP := flag.String("rDelim", "}}}", "The right delimiter to use")
@@ -27,7 +32,7 @@ func main() {
 	flag.Parse()
 
 	leftDelim := *leftDelimP
-	rightDelim := *rightDelimP 
+	rightDelim := *rightDelimP
 
 	fileFolder := filepath.Clean(*fileFolderP)
 	templateFolder := filepath.Clean(*templateFolderP)
@@ -39,8 +44,7 @@ func main() {
 	createOutput(fileFolder, templateFolder, outputFolder, templates)
 }
 
-func loadFileExtensions(extFilePath string)(acceptedExtensions map[string]bool){
-	fmt.Println(extFilePath)
+func loadFileExtensions(extFilePath string) (acceptedExtensions map[string]bool) {
 	//Use a map for quick look up, even though it will take more space than an array, adn most likely there won't
 	//be too many entries, using a map is actually the worse idea, but I don't have to write a for loop
 	acceptedExtensions = make(map[string]bool)
@@ -49,10 +53,10 @@ func loadFileExtensions(extFilePath string)(acceptedExtensions map[string]bool){
 
 	isErr(err)
 	defer file.Close()
-	
+
 	scan := bufio.NewScanner(file)
 
-	for scan.Scan(){
+	for scan.Scan() {
 		acceptedExtensions[scan.Text()] = true
 	}
 
