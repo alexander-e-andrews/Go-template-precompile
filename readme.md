@@ -10,7 +10,7 @@ To Build: go build pretemplate.go
 
 To Run: pretemplate.exe -p "pagesToFillFolder" -t "TemplateToFillWith" -o "FolderToOutputTo"
 
--p -t -o flags are all required in order to point to the correct pages, templates, and output location
+-f -t -o flags are all required in order to point to the correct pages, templates, and output location
 
 Optional Flags:
 -lDelim: The left delimiter
