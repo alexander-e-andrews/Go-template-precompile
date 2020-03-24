@@ -8,9 +8,20 @@ Does not require any non-standard golang libraries
 
 To Build: go build pretemplate.go
 
-To Run: pretemplate.exe "pagesToFillFolder" "TemplateToFillWith" "FolderToOutputTo"
+To Run: pretemplate.exe -p "pagesToFillFolder" -t "TemplateToFillWith" -o "FolderToOutputTo"
 
-Optional 4th and 5th arguments used to change left and right delimiters.
+-p -t -o flags are all required in order to point to the correct pages, templates, and output location
+
+Optional Flags:
+-lDelim: The left delimiter
+-rDelim: The right delimiter
+    Make sure that these delimiters are not subsets of the expected delimiters by your applications template,
+    otherwise you will get an unexpected token error
+-aExt: The accepted file extensions. By default we only accept .html. Requires at least one template fitting the type. Any files not included will be copied to the copy folder
+    The new acceptedFiledExtension should be a txt file, with each accepted file type on a newline including .
+    Ex:
+    .html
+    .js
 
 Make sure that these delimiters are not subsets of the expected delimiters by your applications template,
 otherwise you will get an unexpected token error
