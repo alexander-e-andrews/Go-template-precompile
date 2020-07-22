@@ -8,7 +8,7 @@ Does not require any non-standard golang libraries
 
 To Build: go build pretemplate.go
 
-To Run: pretemplate.exe -p "pagesToFillFolder" -t "TemplateToFillWith" -o "FolderToOutputTo"
+To Run: pretemplate.exe -f "pagesToFillFolder" -t "TemplateToFillWith" -o "FolderToOutputTo"
 
 -f -t -o flags are all required in order to point to the correct pages, templates, and output location
 
