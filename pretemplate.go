@@ -154,8 +154,8 @@ func loadTemplates(templateFolder, leftDelim, rightDelim string) *template.Templ
 	ttPlate := template.New("t").Delims(leftDelim, rightDelim)
 	ttPlate, err := ttPlate.ParseFiles(fileList...)
 	if err != nil {
-		fmt.Println("Problem importing templates")
-		panic("")
+		fmt.Println("Problem importing templates, files will still be copied to new directory")
+		//panic("")
 	}
 	return ttPlate
 }
