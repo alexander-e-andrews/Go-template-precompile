@@ -6,7 +6,8 @@ I hope to example text/template to include an escape command
 
 Does not require any non-standard golang libraries
 
-To Build: go build pretemplate.go
+Either clone this package or run: go get github.com/alexander-e-andrews/Go-template-precompile
+To Install: go install github.com/alexander-e-andrews/Go-template-precompile
 
 To Run: pretemplate.exe -f "pagesToFillFolder" -t "TemplateToFillWith" -o "FolderToOutputTo"
 
