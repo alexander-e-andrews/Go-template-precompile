@@ -8,19 +8,25 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"flag"
+
+	"github.com/radovskyb/watcher"
 )
 
 var extensionAccepts map[string]bool
 
-func main() {
-	path, err := os.Executable()
-	isErr(err)
-	extFileFilePath := filepath.Join(filepath.Dir(path), "fileExt.txt")
-	fmt.Println(extFileFilePath)
+//Want to initiate caching, so only changed files are re-written
+//Investigate "removing" specified templates. Allow templates to have templates inside
+//Modify the timer update, so that if a user continues to type, it doesn't re-compile
 
-	extFilePathP := flag.String("aExt", extFileFilePath, "Used to allow more accepted file extensions into your templating, all others will be plain copied")
+func main() {
+	path, err := os.Getwd()
+	isErr(err)
+	extFileFilePath := filepath.Join(path, "fileExt.txt")
+
+	extFilePathP := flag.String("aExt", extFileFilePath, "File path to the list of file types to compile together")
 
 	leftDelimP := flag.String("lDelim", "{{{", "The left delimiter to use")
 	rightDelimP := flag.String("rDelim", "}}}", "The right delimiter to use")
@@ -28,6 +34,8 @@ func main() {
 	fileFolderP := flag.String("f", ".\\example\\files", "The path to the files we are adding templates to")
 	templateFolderP := flag.String("t", ".\\example\\templates", "The file templates we are adding")
 	outputFolderP := flag.String("o", ".\\example\\output", "The output directory")
+
+	watch := flag.Bool("watch", false, "Set to true to watch and auto re-build your templates")
 
 	flag.Parse()
 
@@ -40,6 +48,46 @@ func main() {
 
 	extensionAccepts = loadFileExtensions(*extFilePathP)
 
+	if !*watch {
+		build(fileFolder, templateFolder, outputFolder, leftDelim, rightDelim)
+		return
+	}
+
+	//We are watching files
+	w := watcher.New()
+	w.SetMaxEvents(1)
+	//Going to watch for all events, so not using filterOps
+
+	go func() {
+		for {
+			select {
+			case event := <-w.Event:
+				fmt.Println(event) // Print the event's info.
+				build(fileFolder, templateFolder, outputFolder, leftDelim, rightDelim)
+			case err := <-w.Error:
+				panic(err)
+			case <-w.Closed:
+				return
+			}
+		}
+	}()
+
+	//Watch for changes in base files and in templates
+	if err := w.AddRecursive(fileFolder); err != nil{
+		panic(err)
+	}
+	if err := w.AddRecursive(templateFolder); err != nil{
+		panic(err)
+	}
+
+	if err := w.Start(time.Second * 5); err !=nil{
+		panic(err)
+	}
+
+}
+
+//Just placing these into a separate function to make it slightly easier to run when watching
+func build(fileFolder, templateFolder, outputFolder, leftDelim, rightDelim string) {
 	templates := loadTemplates(templateFolder, leftDelim, rightDelim)
 	createOutput(fileFolder, templateFolder, outputFolder, templates)
 }
